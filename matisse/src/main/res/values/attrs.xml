@@ -14,23 +14,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <attr name="toolbar" format="reference"/>
-    <attr name="album.dropdown.title.color" format="reference|color"/>
-    <attr name="album.dropdown.count.color" format="reference|color"/>
-    <attr name="album.element.color" format="reference|color"/>
-    <attr name="album.thumbnail.placeholder" format="reference|color"/>
-    <attr name="album.emptyView" format="reference"/>
-    <attr name="album.emptyView.textColor" format="reference|color"/>
-    <attr name="listPopupWindowStyle" format="reference"/>
-    <attr name="page.bg" format="reference|color"/>
-    <attr name="bottomToolbar.bg" format="reference|color"/>
-    <attr name="bottomToolbar.preview.textColor" format="reference|color"/>
-    <attr name="bottomToolbar.apply.textColor" format="reference|color"/>
-    <attr name="preview.bottomToolbar.back.textColor" format="reference|color"/>
-    <attr name="preview.bottomToolbar.apply.textColor" format="reference|color"/>
-    <attr name="item.placeholder" format="reference|color"/>
-    <attr name="item.checkCircle.backgroundColor" format="reference|color"/>
-    <attr name="item.checkCircle.borderColor" format="reference|color"/>
-    <attr name="capture.textColor" format="reference|color"/>
+    <attr name="album.dropdown.title.color" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="album.dropdown.count.color" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="album.element.color" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="album.thumbnail.placeholder" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="album.emptyView" format="reference" tools:ignore="MissingDefaultResource"/>
+    <attr name="album.emptyView.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="listPopupWindowStyle" format="reference" tools:ignore="MissingDefaultResource"/>
+    <attr name="page.bg" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="bottomToolbar.bg" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="bottomToolbar.preview.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="bottomToolbar.apply.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="preview.bottomToolbar.back.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="preview.bottomToolbar.apply.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="item.placeholder" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="item.checkCircle.backgroundColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="item.checkCircle.borderColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="capture.textColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="snackbar.errorBgColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+    <attr name="snackbar.errorTextColor" format="reference|color" tools:ignore="MissingDefaultResource"/>
+
 </resources>

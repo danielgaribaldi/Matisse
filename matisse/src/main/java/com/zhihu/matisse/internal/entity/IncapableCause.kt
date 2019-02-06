@@ -15,17 +15,28 @@
  */
 package com.zhihu.matisse.internal.entity
 
-import android.R
 import android.app.Activity
 import android.content.Context
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
+import androidx.annotation.AttrRes
+import androidx.core.content.ContextCompat
 
 import androidx.fragment.app.FragmentActivity
 
-import androidx.core.content.ContextCompat
-
 import com.google.android.material.snackbar.Snackbar
+import com.zhihu.matisse.R
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog
+
+fun Context.getColorFromAttr(
+        @AttrRes attrColor: Int,
+        typedValue: TypedValue = TypedValue(),
+        resolveRefs: Boolean = true
+): Int {
+    theme.resolveAttribute(attrColor, typedValue, resolveRefs)
+    return typedValue.data
+}
 
 class IncapableCause(private val type: DialogType = DialogType.TOAST,
                      private val title: String = "",
@@ -42,9 +53,17 @@ class IncapableCause(private val type: DialogType = DialogType.TOAST,
 
                 when (it.type) {
 
-                    DialogType.TOAST -> Snackbar.make((context as Activity).window.decorView.findViewById<View>(R.id.content),
-                                                      cause.message, Snackbar.LENGTH_SHORT)
-                            .apply { view.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_dark)) }.show()
+                    DialogType.TOAST -> Snackbar.make((context as FragmentActivity).window.decorView.findViewById<View>(android.R.id.content),
+                                                      cause.message, Snackbar.LENGTH_SHORT).apply {
+
+                        view.setBackgroundColor(context.getColorFromAttr(R.attr.snackbar_errorBgColor))
+                        
+                        (view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView).apply {
+
+                            setTextColor(context.getColorFromAttr(R.attr.snackbar_errorTextColor))
+                        }
+                    }.show()
+
 
                     DialogType.DIALOG -> IncapableDialog.newInstance(cause.title, cause.message)
                             .show((context as FragmentActivity).supportFragmentManager, IncapableDialog::class.java.name)
