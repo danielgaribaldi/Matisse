@@ -28,7 +28,7 @@ import com.zhihu.matisse.engine.ImageEngine
  * [ImageEngine] implementation using Glide.
  */
 
-class GlideEngine : ImageEngine {
+class GlideEngine(private val enableAnimatedGifs: Boolean = true) : ImageEngine {
 
     override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
 
@@ -80,8 +80,6 @@ class GlideEngine : ImageEngine {
                 .into(imageView)
     }
 
-    override fun supportAnimatedGif(): Boolean {
-        return true
-    }
+    override fun supportAnimatedGif() = enableAnimatedGifs
 
 }
