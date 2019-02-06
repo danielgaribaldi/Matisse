@@ -204,7 +204,7 @@ public class AlbumMediaAdapter extends
 
     private boolean assertAddSelection(Context context, Item item) {
         IncapableCause cause = mSelectedCollection.isAcceptable(item);
-        IncapableCause.handleCause(context, cause);
+        IncapableCause.Companion.handleCause(context, cause);
         return cause == null;
     }
 

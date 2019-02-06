@@ -352,7 +352,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     private boolean assertAddSelection(Item item) {
         IncapableCause cause = mSelectedCollection.isAcceptable(item);
-        IncapableCause.handleCause(this, cause);
+        IncapableCause.Companion.handleCause(this, cause);
         return cause == null;
     }
 }
