@@ -21,8 +21,10 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ListPopupWindow;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -37,19 +39,29 @@ import com.zhihu.matisse.internal.utils.Platform;
 public class AlbumsSpinner {
 
     private static final int MAX_SHOWN_COUNT = 6;
+
+    private int MAX_ITEMS;
+    private int SELECTED_ITEMS;
+    private String CURRENT_SELECTED_ALBUM;
+
     private CursorAdapter mAdapter;
     private TextView mSelected;
     private FrameLayout mBackground;
     private ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
 
-    public AlbumsSpinner(@NonNull Context context) {
+    public AlbumsSpinner(@NonNull Context context, int maxItems) {
+
+        MAX_ITEMS = maxItems;
+        CURRENT_SELECTED_ALBUM = "ALL";
+        SELECTED_ITEMS = 0;
+
         mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
         mListPopupWindow.setModal(true);
         float density = context.getResources().getDisplayMetrics().density;
         mListPopupWindow.setContentWidth((int) (context.getResources().getDisplayMetrics().widthPixels * density));
         //mListPopupWindow.setHorizontalOffset((int) (16 * density));
-       // mListPopupWindow.setVerticalOffset((int) (-48 * density));
+        // mListPopupWindow.setVerticalOffset((int) (-48 * density));
 
         mListPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
             AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
@@ -59,7 +71,6 @@ public class AlbumsSpinner {
             mBackground.setVisibility(View.GONE);
         });
 
-
         mListPopupWindow.setOnDismissListener(() -> {
 
             mBackground.setVisibility(View.GONE);
@@ -67,44 +78,58 @@ public class AlbumsSpinner {
     }
 
     public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
+
         mOnItemSelectedListener = listener;
     }
 
     public void setSelection(Context context, int position) {
+
         mListPopupWindow.setSelection(position);
         onItemSelected(context, position);
     }
 
+    public void updateSelectedCount(int selectedItems) {
+
+        SELECTED_ITEMS = selectedItems;
+        mSelected.setText(CURRENT_SELECTED_ALBUM + " (" + SELECTED_ITEMS + "/" + MAX_ITEMS + ")");
+    }
+
     private void onItemSelected(Context context, int position) {
+
         mListPopupWindow.dismiss();
         Cursor cursor = mAdapter.getCursor();
         cursor.moveToPosition(position);
         Album album = Album.valueOf(cursor);
-        String displayName = album.getDisplayName(context);
+        CURRENT_SELECTED_ALBUM = album.getDisplayName(context);
         if (mSelected.getVisibility() == View.VISIBLE) {
-            mSelected.setText(displayName);
-        } else {
+
+            mSelected.setText(CURRENT_SELECTED_ALBUM + " (" + SELECTED_ITEMS + "/" + MAX_ITEMS + ")");
+        }
+        else {
             if (Platform.hasICS()) {
                 mSelected.setAlpha(0.0f);
                 mSelected.setVisibility(View.VISIBLE);
-                mSelected.setText(displayName);
+                mSelected.setText(CURRENT_SELECTED_ALBUM + " (" + SELECTED_ITEMS + "/" + MAX_ITEMS + ")");
                 mSelected.animate().alpha(1.0f).setDuration(context.getResources().getInteger(
                         android.R.integer.config_longAnimTime)).start();
-            } else {
+            }
+            else {
                 mSelected.setVisibility(View.VISIBLE);
-                mSelected.setText(displayName);
+                mSelected.setText(CURRENT_SELECTED_ALBUM + " (" + SELECTED_ITEMS + "/" + MAX_ITEMS + ")");
             }
 
         }
     }
 
     public void setAdapter(CursorAdapter adapter) {
+
         mListPopupWindow.setAdapter(adapter);
         mAdapter = adapter;
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void setSelectedTextView(TextView textView, FrameLayout background) {
+
         mSelected = textView;
 
         mBackground = background;
@@ -130,6 +155,7 @@ public class AlbumsSpinner {
     }
 
     public void setPopupAnchorView(View view) {
+
         mListPopupWindow.setAnchorView(view);
     }
 

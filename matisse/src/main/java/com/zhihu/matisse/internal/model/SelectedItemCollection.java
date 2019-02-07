@@ -225,7 +225,7 @@ public class SelectedItemCollection {
     }
 
     // depends
-    private int currentMaxSelectable() {
+    public int currentMaxSelectable() {
 
         SelectionSpec spec = SelectionSpec.getInstance();
         if (spec.maxSelectable > 0) {

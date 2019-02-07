@@ -151,7 +151,7 @@ public class MatisseActivity extends AppCompatActivity implements
         updateBottomToolbar();
 
         mAlbumsAdapter = new AlbumsAdapter(this, null, false);
-        mAlbumsSpinner = new AlbumsSpinner(this);
+        mAlbumsSpinner = new AlbumsSpinner(this, mSelectedCollection.currentMaxSelectable());
         mAlbumsSpinner.setOnItemSelectedListener(this);
         mAlbumsSpinner.setSelectedTextView( findViewById(R.id.selected_album), mSpinnerBackGround);
         mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
@@ -297,6 +297,11 @@ public class MatisseActivity extends AppCompatActivity implements
         invalidateOptionsMenu();
 
         int selectedCount = mSelectedCollection.count();
+
+        if(mAlbumsSpinner!=null){
+            mAlbumsSpinner.updateSelectedCount(selectedCount);
+        }
+
         if (selectedCount == 0) {
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
