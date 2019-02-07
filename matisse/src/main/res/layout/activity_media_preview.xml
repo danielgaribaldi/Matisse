@@ -32,46 +32,47 @@
         android:layout_alignParentBottom="true"
         android:background="@color/preview_bottom_toolbar_bg"
         android:elevation="4dp"
+        android:visibility="gone"
         tools:targetApi="lollipop">
 
         <TextView
             android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
             android:foreground="?selectableItemBackground"
             android:padding="16dp"
-            android:layout_gravity="start"
             android:text="@string/button_back"
             android:textColor="?attr/preview.bottomToolbar.back.textColor"
             android:textSize="16sp"/>
 
 
         <LinearLayout
-            android:layout_gravity="center"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
 
             <LinearLayout
-                android:padding="16dp"
                 android:id="@+id/originalLayout"
-                android:visibility="gone"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:foreground="?selectableItemBackground"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:foreground="?selectableItemBackground"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:visibility="gone"
                 tools:showIn="@layout/activity_matisse">
 
 
                 <com.zhihu.matisse.internal.ui.widget.CheckRadioView
                     android:id="@+id/original"
-                    android:src="@drawable/ic_preview_radio_off"
-                    android:layout_gravity="center_vertical"
-                    android:tint="#ffffff"
                     android:layout_width="16dp"
-                    android:layout_height="16dp" />
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_preview_radio_off"
+                    android:tint="#ffffff"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,10 +83,9 @@
                     android:paddingLeft="4dp"
                     android:text="@string/button_original"
                     android:textColor="?attr/preview.bottomToolbar.back.textColor"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
 
             </LinearLayout>
-
 
 
             <TextView
@@ -97,7 +97,6 @@
                 android:textSize="16sp"
                 android:visibility="gone"/>
         </LinearLayout>
-
 
 
         <TextView

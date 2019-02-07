@@ -17,8 +17,11 @@ package com.zhihu.matisse.internal.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.Nullable;
 
+import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
@@ -94,4 +97,6 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
     public void onAlbumMediaReset() {
 
     }
+
+
 }

@@ -19,10 +19,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -74,6 +77,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         setTheme(SelectionSpec.getInstance().themeId);
         super.onCreate(savedInstanceState);
         if (!SelectionSpec.getInstance().hasInited) {
@@ -94,13 +98,14 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         if (savedInstanceState == null) {
             mSelectedCollection.onCreate(getIntent().getBundleExtra(EXTRA_DEFAULT_BUNDLE));
             mOriginalEnable = getIntent().getBooleanExtra(EXTRA_RESULT_ORIGINAL_ENABLE, false);
-        } else {
+        }
+        else {
             mSelectedCollection.onCreate(savedInstanceState);
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
         }
-        mButtonBack = (TextView) findViewById(R.id.button_back);
-        mButtonApply = (TextView) findViewById(R.id.button_apply);
-        mSize = (TextView) findViewById(R.id.size);
+        mButtonBack = findViewById(R.id.button_back);
+        mButtonApply = findViewById(R.id.button_apply);
+        mSize = findViewById(R.id.size);
         mButtonBack.setOnClickListener(this);
         mButtonApply.setOnClickListener(this);
 
@@ -113,71 +118,77 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
 
-        mCheckView.setOnClickListener(new View.OnClickListener() {
+        mCheckView.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-                Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
-                if (mSelectedCollection.isSelected(item)) {
-                    mSelectedCollection.remove(item);
+            Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
+            if (mSelectedCollection.isSelected(item)) {
+                mSelectedCollection.remove(item);
+                if (mSpec.countable) {
+                    mCheckView.setCheckedNum(CheckView.UNCHECKED);
+                }
+                else {
+                    mCheckView.setChecked(false);
+                }
+            }
+            else {
+                if (assertAddSelection(item)) {
+                    mSelectedCollection.add(item);
                     if (mSpec.countable) {
-                        mCheckView.setCheckedNum(CheckView.UNCHECKED);
-                    } else {
-                        mCheckView.setChecked(false);
+                        mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
                     }
-                } else {
-                    if (assertAddSelection(item)) {
-                        mSelectedCollection.add(item);
-                        if (mSpec.countable) {
-                            mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
-                        } else {
-                            mCheckView.setChecked(true);
-                        }
+                    else {
+                        mCheckView.setChecked(true);
                     }
                 }
-                updateApplyButton();
+            }
+            updateApplyButton();
 
-                if (mSpec.onSelectedListener != null) {
-                    mSpec.onSelectedListener.onSelected(
-                            mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
-                }
+            if (mSpec.onSelectedListener != null) {
+                mSpec.onSelectedListener.onSelected(
+                        mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
             }
         });
 
-
         mOriginalLayout = findViewById(R.id.originalLayout);
         mOriginal = findViewById(R.id.original);
-        mOriginalLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mOriginalLayout.setOnClickListener(v -> {
 
-                int count = countOverMaxSize();
-                if (count > 0) {
-                    IncapableDialog incapableDialog = IncapableDialog.newInstance("",
-                            getString(R.string.error_over_original_count, count, mSpec.originalMaxSize));
-                    incapableDialog.show(getSupportFragmentManager(),
-                            IncapableDialog.class.getName());
-                    return;
-                }
+            int count = countOverMaxSize();
+            if (count > 0) {
+                IncapableDialog incapableDialog = IncapableDialog.newInstance("",
+                        getString(R.string.error_over_original_count, count, mSpec.originalMaxSize));
+                incapableDialog.show(getSupportFragmentManager(),
+                        IncapableDialog.class.getName());
+                return;
+            }
 
-                mOriginalEnable = !mOriginalEnable;
-                mOriginal.setChecked(mOriginalEnable);
-                if (!mOriginalEnable) {
-                    mOriginal.setColor(Color.WHITE);
-                }
+            mOriginalEnable = !mOriginalEnable;
+            mOriginal.setChecked(mOriginalEnable);
+            if (!mOriginalEnable) {
+                mOriginal.setColor(Color.WHITE);
+            }
 
-
-                if (mSpec.onCheckedListener != null) {
-                    mSpec.onCheckedListener.onCheck(mOriginalEnable);
-                }
+            if (mSpec.onCheckedListener != null) {
+                mSpec.onCheckedListener.onCheck(mOriginalEnable);
             }
         });
 
         updateApplyButton();
+        hideUIElements();
+    }
+
+
+
+    private void hideUIElements(){
+
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+
         mSelectedCollection.onSaveInstanceState(outState);
         outState.putBoolean("checkState", mOriginalEnable);
         super.onSaveInstanceState(outState);
@@ -185,15 +196,33 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     @Override
     public void onBackPressed() {
+
         sendBackResult(false);
         super.onBackPressed();
+        overridePendingTransition(R.anim.act_back_in, R.anim.act_back_out);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+
+            finish();
+            overridePendingTransition(R.anim.act_back_in, R.anim.act_back_out);
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.button_back) {
             onBackPressed();
-        } else if (v.getId() == R.id.button_apply) {
+        }
+        else if (v.getId() == R.id.button_apply) {
             sendBackResult(true);
             finish();
         }
@@ -201,6 +230,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     @Override
     public void onClick() {
+
         if (!mSpec.autoHideToobar) {
             return;
         }
@@ -214,7 +244,8 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                     .translationYBy(-mBottomToolbar.getMeasuredHeight())
                     .setInterpolator(new FastOutSlowInInterpolator())
                     .start();
-        } else {
+        }
+        else {
             mTopToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
                     .translationYBy(-mTopToolbar.getMeasuredHeight())
@@ -236,6 +267,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     @Override
     public void onPageSelected(int position) {
+
         PreviewPagerAdapter adapter = (PreviewPagerAdapter) mPager.getAdapter();
         if (mPreviousPos != -1 && mPreviousPos != position) {
             ((PreviewItemFragment) adapter.instantiateItem(mPager, mPreviousPos)).resetView();
@@ -246,15 +278,18 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                 mCheckView.setCheckedNum(checkedNum);
                 if (checkedNum > 0) {
                     mCheckView.setEnabled(true);
-                } else {
+                }
+                else {
                     mCheckView.setEnabled(!mSelectedCollection.maxSelectableReached());
                 }
-            } else {
+            }
+            else {
                 boolean checked = mSelectedCollection.isSelected(item);
                 mCheckView.setChecked(checked);
                 if (checked) {
                     mCheckView.setEnabled(true);
-                } else {
+                }
+                else {
                     mCheckView.setEnabled(!mSelectedCollection.maxSelectableReached());
                 }
             }
@@ -269,14 +304,17 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     }
 
     private void updateApplyButton() {
+
         int selectedCount = mSelectedCollection.count();
         if (selectedCount == 0) {
             mButtonApply.setText(R.string.button_sure_default);
             mButtonApply.setEnabled(false);
-        } else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled()) {
+        }
+        else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled()) {
             mButtonApply.setText(R.string.button_sure_default);
             mButtonApply.setEnabled(true);
-        } else {
+        }
+        else {
             mButtonApply.setEnabled(true);
             mButtonApply.setText(getString(R.string.button_sure, selectedCount));
         }
@@ -284,13 +322,14 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         if (mSpec.originalable) {
             mOriginalLayout.setVisibility(View.VISIBLE);
             updateOriginalState();
-        } else {
+        }
+        else {
             mOriginalLayout.setVisibility(View.GONE);
         }
     }
 
-
     private void updateOriginalState() {
+
         mOriginal.setChecked(mOriginalEnable);
         if (!mOriginalEnable) {
             mOriginal.setColor(Color.WHITE);
@@ -311,8 +350,8 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         }
     }
 
-
     private int countOverMaxSize() {
+
         int count = 0;
         int selectedCount = mSelectedCollection.count();
         for (int i = 0; i < selectedCount; i++) {
@@ -328,21 +367,25 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     }
 
     protected void updateSize(Item item) {
+
         if (item.isGif()) {
             mSize.setVisibility(View.VISIBLE);
             mSize.setText(PhotoMetadataUtils.getSizeInMB(item.size) + "M");
-        } else {
+        }
+        else {
             mSize.setVisibility(View.GONE);
         }
 
         if (item.isVideo()) {
             mOriginalLayout.setVisibility(View.GONE);
-        } else if (mSpec.originalable) {
+        }
+        else if (mSpec.originalable) {
             mOriginalLayout.setVisibility(View.VISIBLE);
         }
     }
 
     protected void sendBackResult(boolean apply) {
+
         Intent intent = new Intent();
         intent.putExtra(EXTRA_RESULT_BUNDLE, mSelectedCollection.getDataWithBundle());
         intent.putExtra(EXTRA_RESULT_APPLY, apply);
@@ -351,6 +394,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     }
 
     private boolean assertAddSelection(Item item) {
+
         IncapableCause cause = mSelectedCollection.isAcceptable(item);
         IncapableCause.Companion.handleCause(this, cause);
         return cause == null;

@@ -63,8 +63,11 @@ class SelectionCreator
  * @param matisse   a requester context wrapper.
  * @param mimeTypes MIME type set to select.
  */
-internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean) {
-    private val mSelectionSpec: SelectionSpec
+internal constructor(private val mMatisse: Matisse,
+                     mimeTypes: Set<MimeType>,
+                     mediaTypeExclusive: Boolean) {
+
+    private val mSelectionSpec: SelectionSpec = SelectionSpec.getCleanInstance()
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @IntDef(SCREEN_ORIENTATION_UNSPECIFIED, SCREEN_ORIENTATION_LANDSCAPE, SCREEN_ORIENTATION_PORTRAIT, SCREEN_ORIENTATION_USER, SCREEN_ORIENTATION_BEHIND, SCREEN_ORIENTATION_SENSOR, SCREEN_ORIENTATION_NOSENSOR, SCREEN_ORIENTATION_SENSOR_LANDSCAPE, SCREEN_ORIENTATION_SENSOR_PORTRAIT, SCREEN_ORIENTATION_REVERSE_LANDSCAPE, SCREEN_ORIENTATION_REVERSE_PORTRAIT, SCREEN_ORIENTATION_FULL_SENSOR, SCREEN_ORIENTATION_USER_LANDSCAPE, SCREEN_ORIENTATION_USER_PORTRAIT, SCREEN_ORIENTATION_FULL_USER, SCREEN_ORIENTATION_LOCKED)
@@ -72,7 +75,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
     internal annotation class ScreenOrientation
 
     init {
-        mSelectionSpec = SelectionSpec.getCleanInstance()
         mSelectionSpec.mimeTypeSet = mimeTypes
         mSelectionSpec.mediaTypeExclusive = mediaTypeExclusive
         mSelectionSpec.orientation = SCREEN_ORIENTATION_UNSPECIFIED
@@ -333,7 +335,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
         val activity = mMatisse.activity ?: return
 
         val intent = Intent(activity, MatisseActivity::class.java)
-
 
         val fragment = mMatisse.fragment
         if (fragment != null) {

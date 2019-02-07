@@ -15,25 +15,19 @@
  */
 package com.zhihu.matisse.internal.entity
 
-import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.AttrRes
-import androidx.core.content.ContextCompat
-
 import androidx.fragment.app.FragmentActivity
-
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.R
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog
 
-fun Context.getColorFromAttr(
-        @AttrRes attrColor: Int,
-        typedValue: TypedValue = TypedValue(),
-        resolveRefs: Boolean = true
-): Int {
+fun Context.getColorFromAttr(@AttrRes attrColor: Int, typedValue: TypedValue = TypedValue(),
+        resolveRefs: Boolean = true): Int {
+
     theme.resolveAttribute(attrColor, typedValue, resolveRefs)
     return typedValue.data
 }
@@ -57,7 +51,7 @@ class IncapableCause(private val type: DialogType = DialogType.TOAST,
                                                       cause.message, Snackbar.LENGTH_SHORT).apply {
 
                         view.setBackgroundColor(context.getColorFromAttr(R.attr.snackbar_errorBgColor))
-                        
+
                         (view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView).apply {
 
                             setTextColor(context.getColorFromAttr(R.attr.snackbar_errorTextColor))
