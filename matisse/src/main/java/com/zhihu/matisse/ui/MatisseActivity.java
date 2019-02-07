@@ -38,6 +38,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -89,6 +90,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private TextView mButtonApply;
     private View mContainer;
     private View mEmptyView;
+    private FrameLayout mSpinnerBackGround;
 
     private LinearLayout mOriginalLayout;
     private CheckRadioView mOriginal;
@@ -130,8 +132,10 @@ public class MatisseActivity extends AppCompatActivity implements
         ta.recycle();
         navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
-        mButtonPreview = (TextView) findViewById(R.id.button_preview);
-        mButtonApply = (TextView) findViewById(R.id.button_apply);
+        mSpinnerBackGround = findViewById(R.id.blurredView);
+
+        mButtonPreview =  findViewById(R.id.button_preview);
+        mButtonApply =  findViewById(R.id.button_apply);
         mButtonPreview.setOnClickListener(this);
         mButtonApply.setOnClickListener(this);
         mContainer = findViewById(R.id.container);
@@ -149,7 +153,7 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumsAdapter = new AlbumsAdapter(this, null, false);
         mAlbumsSpinner = new AlbumsSpinner(this);
         mAlbumsSpinner.setOnItemSelectedListener(this);
-        mAlbumsSpinner.setSelectedTextView((TextView) findViewById(R.id.selected_album));
+        mAlbumsSpinner.setSelectedTextView( findViewById(R.id.selected_album), mSpinnerBackGround);
         mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
         mAlbumsSpinner.setAdapter(mAlbumsAdapter);
         mAlbumCollection.onCreate(this, this);

@@ -15,6 +15,7 @@
  */
 package com.zhihu.matisse.internal.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -25,6 +26,8 @@ import androidx.appcompat.widget.ListPopupWindow;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.FrameLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.zhihu.matisse.R;
@@ -36,6 +39,7 @@ public class AlbumsSpinner {
     private static final int MAX_SHOWN_COUNT = 6;
     private CursorAdapter mAdapter;
     private TextView mSelected;
+    private FrameLayout mBackground;
     private ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
 
@@ -43,19 +47,22 @@ public class AlbumsSpinner {
         mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
         mListPopupWindow.setModal(true);
         float density = context.getResources().getDisplayMetrics().density;
-        mListPopupWindow.setContentWidth((int) (216 * density));
-        mListPopupWindow.setHorizontalOffset((int) (16 * density));
-        mListPopupWindow.setVerticalOffset((int) (-48 * density));
+        mListPopupWindow.setContentWidth((int) (context.getResources().getDisplayMetrics().widthPixels * density));
+        //mListPopupWindow.setHorizontalOffset((int) (16 * density));
+       // mListPopupWindow.setVerticalOffset((int) (-48 * density));
 
-        mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
-                if (mOnItemSelectedListener != null) {
-                    mOnItemSelectedListener.onItemSelected(parent, view, position, id);
-                }
+        mListPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
+            AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
+            if (mOnItemSelectedListener != null) {
+                mOnItemSelectedListener.onItemSelected(parent, view, position, id);
             }
+            mBackground.setVisibility(View.GONE);
+        });
+
+
+        mListPopupWindow.setOnDismissListener(() -> {
+
+            mBackground.setVisibility(View.GONE);
         });
     }
 
@@ -96,8 +103,11 @@ public class AlbumsSpinner {
         mAdapter = adapter;
     }
 
-    public void setSelectedTextView(TextView textView) {
+    @SuppressLint("ClickableViewAccessibility")
+    public void setSelectedTextView(TextView textView, FrameLayout background) {
         mSelected = textView;
+
+        mBackground = background;
         // tint dropdown arrow icon
         Drawable[] drawables = mSelected.getCompoundDrawables();
         Drawable right = drawables[2];
@@ -108,16 +118,13 @@ public class AlbumsSpinner {
         right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
         mSelected.setVisibility(View.GONE);
-        mSelected.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
-                mListPopupWindow.setHeight(
-                        mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
-                                : itemHeight * mAdapter.getCount());
-                mListPopupWindow.show();
-            }
+        mSelected.setOnClickListener(v -> {
+            int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
+            mListPopupWindow.setHeight(
+                    mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
+                            : itemHeight * mAdapter.getCount());
+            mListPopupWindow.show();
+            mBackground.setVisibility(View.VISIBLE);
         });
         mSelected.setOnTouchListener(mListPopupWindow.createDragToOpenListener(mSelected));
     }

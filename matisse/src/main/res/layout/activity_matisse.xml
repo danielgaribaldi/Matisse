@@ -16,6 +16,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/root"
+                android:animateLayoutChanges="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -119,7 +120,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-
         android:layout_alignParentBottom="true"
         android:visibility="gone">
 
@@ -136,4 +136,15 @@
             android:textSize="16sp"/>
 
     </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/blurredView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:background="@drawable/spinner_background"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
+
 </RelativeLayout>
